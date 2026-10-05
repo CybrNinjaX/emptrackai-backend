@@ -32,7 +32,7 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 Install dependencies:
 
 ```bash
-pip install django psycopg python-dotenv
+pip install django "psycopg[binary]" python-dotenv
 ```
 
 Create the local environment file:
