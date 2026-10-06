@@ -1,0 +1,23 @@
+// POST
+// http://127.0.0.1:8000/api/login/
+
+{
+    "email":"admin@example.com",
+    "password":"AdminPass@123"
+}
+
+// Sucessful Response
+// HTTP 200 OK
+
+{
+    "message": "Login successful.",
+    "admin": {
+        "id": 1,
+        "username": "api_test",
+        "company_name": "Acme Corp",
+        "email": "api_test@example.com",
+        "role": "ADMIN"
+    },
+    "refresh": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc5MTMwMzgyMiwiaWF0IjoxNzkxMjE3NDIyLCJqdGkiOiJlNzNjMmEzNzA1ZDg0NjU2OTViNTAzNjM5YTZkZjJkMiIsImVtYWlsIjoiYXBpX3Rlc3RAZXhhbXBsZS5jb20iLCJ1c2VybmFtZSI6ImFwaV90ZXN0Iiwicm9sZSI6IkFETUlOIn0.hvnuEai0bw532wjDPobGUHZbC-LfKkMRbmc8oS8F-wE",
+    "access": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzkxMjE3NzIyLCJpYXQiOjE3OTEyMTc0MjIsImp0aSI6IjgzMDQ5YzMzNDM5MTQ1YTY4ZTcxYWNjZmNhOGQ5YzhjIiwiZW1haWwiOiJhcGlfdGVzdEBleGFtcGxlLmNvbSIsInVzZXJuYW1lIjoiYXBpX3Rlc3QiLCJyb2xlIjoiQURNSU4ifQ.CmL_YlGc3WaIzri9SvQXZgLInE770gSyjfbFCZdPMH8"
+}
