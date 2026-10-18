@@ -1,8 +1,11 @@
 from django.urls import path
 
+from .views import profile
+
 from .views import login_admin, register_admin
 
 urlpatterns = [
     path('register/', register_admin, name='register-admin'),
     path('login/', login_admin, name='login-admin'),
+    path('profile/<int:user_id>/', profile, name='admin-profile'),
 ]

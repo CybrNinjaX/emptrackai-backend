@@ -4,7 +4,7 @@ from django.contrib.auth.hashers import check_password, make_password
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework_simplejwt.tokens import RefreshToken
-
+from django.views.decorators.http import require_GET
 from .models import Admin
 
 
@@ -106,3 +106,23 @@ def login_admin(request):
         },
         status=200,
     )
+
+
+@require_GET
+def profile(request, user_id):
+    try:
+        user = Admin.objects.get(id=user_id)
+
+        return JsonResponse({
+            "id": user.id,
+            "username": user.username,
+            "email": user.email,
+            "role": user.role,
+            "company_name": user.company_name,
+        })
+
+    except Admin.DoesNotExist:
+        return JsonResponse(
+            {"error": "User profile not found"},
+            status=404
+        )
