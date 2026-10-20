@@ -276,3 +276,16 @@ __pycache__/
 ```
 
 Never upload real database passwords, API keys, or other secrets to GitHub.
+
+---
+
+## API - Profile
+
+### Get Admin Profile
+
+Example request:
+
+```http
+GET /api/profile/
+Authorization: Bearer <your_access_token>
+
