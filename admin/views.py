@@ -106,22 +106,3 @@ def login_admin(request):
         status=200,
     )
 
-
-@require_GET
-def profile(request, user_id):
-    try:
-        user = Admin.objects.get(id=user_id)
-
-        return JsonResponse({
-            "id": user.id,
-            "username": user.username,
-            "email": user.email,
-            "role": user.role,
-            "company_name": user.company_name,
-        })
-
-    except Admin.DoesNotExist:
-        return JsonResponse(
-            {"error": "User profile not found"},
-            status=404
-        )
