@@ -4,7 +4,6 @@ from django.contrib.auth.hashers import check_password, make_password
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework_simplejwt.tokens import RefreshToken
-from django.views.decorators.http import require_GET
 from .models import Admin
 
 
