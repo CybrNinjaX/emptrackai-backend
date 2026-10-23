@@ -1,6 +1,5 @@
 from django.urls import path
 
-from .views import profile
 
 from .views import login_admin, register_admin
 
