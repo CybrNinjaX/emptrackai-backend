@@ -11,12 +11,26 @@ from .models import Employee
 
 @csrf_exempt
 def create_employee(request):
-    if request.method != 'POST':
-        return JsonResponse({'error': 'Only POST requests are allowed.'}, status=405)
-
     admin, error = get_authenticated_admin(request)
     if error:
         return error
+
+    if request.method == 'GET':
+        employees = Employee.objects.filter(admin=admin).order_by('-created_at')
+        return JsonResponse({'employees': [
+            {
+                'id': employee.id,
+                'admin_id': admin.id,
+                'username': employee.username,
+                'company_name': employee.company_name,
+                'email': employee.email,
+                'role': employee.role,
+                'created_at': employee.created_at.isoformat(),
+            }
+            for employee in employees
+        ]})
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Only GET and POST requests are allowed.'}, status=405)
 
     try:
         data = json.loads(request.body)

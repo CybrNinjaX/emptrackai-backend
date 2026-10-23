@@ -42,3 +42,7 @@ Content-Type: application/json
   "password": "EmployeePass123!",
   "confirm_password": "EmployeePass123!"
 }
+
+### List employees for the authenticated admin's company
+GET {{baseUrl}}/api/employees/
+Authorization: Bearer {{loginAdmin.response.body.$.access}}

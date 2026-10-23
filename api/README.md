@@ -15,3 +15,4 @@ Endpoints covered:
 - `POST /api/login/`
 - `GET /api/profile/` (Bearer access token required)
 - `POST /api/employees/` (Bearer access token required)
+- `GET /api/employees/` (Bearer access token required; lists only the current admin's employees)
