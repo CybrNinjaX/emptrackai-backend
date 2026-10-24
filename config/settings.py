@@ -36,13 +36,14 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    # Keep this before django.contrib apps so its runserver override is selected.
+    'admin.apps.AdminConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'admin.apps.AdminConfig',
     'rest_framework',
     'employee',
 ]

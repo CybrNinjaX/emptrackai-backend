@@ -4,6 +4,8 @@ from django.contrib.auth.hashers import check_password, make_password
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.exceptions import TokenError
+from rest_framework_simplejwt.tokens import AccessToken
 from .models import Admin
 
 
@@ -86,6 +88,7 @@ def login_admin(request):
         return JsonResponse({'error': 'Invalid email or password.'}, status=401)
 
     refresh = RefreshToken()
+    refresh['admin_id'] = admin.id
     refresh['email'] = admin.email
     refresh['username'] = admin.username
     refresh['role'] = admin.role
@@ -105,4 +108,44 @@ def login_admin(request):
         },
         status=200,
     )
+
+
+def get_authenticated_admin(request):
+    """Return the admin represented by a valid SimpleJWT access token."""
+    authorization = request.headers.get('Authorization', '')
+    parts = authorization.split()
+    if len(parts) != 2 or parts[0].lower() != 'bearer':
+        return None, JsonResponse({'error': 'A Bearer access token is required.'}, status=401)
+
+    try:
+        token = AccessToken(parts[1])
+        admin_id = token.get('admin_id')
+        if admin_id is not None:
+            admin = Admin.objects.get(pk=admin_id)
+        else:
+            # Tokens issued before admin_id was added can still resolve by email.
+            admin = Admin.objects.get(email=token.get('email'))
+    except (TokenError, Admin.DoesNotExist, TypeError, ValueError):
+        return None, JsonResponse({'error': 'Invalid or expired access token.'}, status=401)
+
+    if admin.role != 'ADMIN':
+        return None, JsonResponse({'error': 'Admin access is required.'}, status=403)
+    return admin, None
+
+
+@csrf_exempt
+def admin_profile(request):
+    if request.method != 'GET':
+        return JsonResponse({'error': 'Only GET requests are allowed.'}, status=405)
+    admin, error = get_authenticated_admin(request)
+    if error:
+        return error
+    return JsonResponse({'admin': {
+        'id': admin.id,
+        'username': admin.username,
+        'company_name': admin.company_name,
+        'email': admin.email,
+        'role': admin.role,
+        'created_at': admin.created_at.isoformat(),
+    }})
 

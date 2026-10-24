@@ -1,0 +1,48 @@
+@baseUrl = http://127.0.0.1:8000
+@email = api_test@example.com
+@password = ChangeMe123!
+@username = api_test
+@companyName = Acme Corp
+
+### Register an admin (first run only; duplicate email returns 409)
+# @name registerAdmin
+POST {{baseUrl}}/api/register/
+Content-Type: application/json
+
+{
+  "username": "{{username}}",
+  "company_name": "{{companyName}}",
+  "email": "{{email}}",
+  "password": "{{password}}",
+  "confirm_password": "{{password}}"
+}
+
+### Login and receive fresh SimpleJWT access/refresh tokens
+# @name loginAdmin
+POST {{baseUrl}}/api/login/
+Content-Type: application/json
+
+{
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+### Get the logged-in admin profile
+GET {{baseUrl}}/api/profile/
+Authorization: Bearer {{loginAdmin.response.body.$.access}}
+
+### Create an employee for the authenticated admin's company
+POST {{baseUrl}}/api/employees/
+Authorization: Bearer {{loginAdmin.response.body.$.access}}
+Content-Type: application/json
+
+{
+  "username": "employee_test",
+  "email": "employee_test@example.com",
+  "password": "EmployeePass123!",
+  "confirm_password": "EmployeePass123!"
+}
+
+### List employees for the authenticated admin's company
+GET {{baseUrl}}/api/employees/
+Authorization: Bearer {{loginAdmin.response.body.$.access}}

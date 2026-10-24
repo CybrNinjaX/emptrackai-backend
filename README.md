@@ -201,6 +201,14 @@ Start the Django development server:
 python manage.py runserver
 ```
 
+This project overrides `runserver` to apply saved migrations before startup, using `--fake-initial` for tables that already exist. After changing a model, generate and save its migration first:
+
+```bash
+python manage.py makemigrations
+```
+
+Then run `python manage.py runserver`. For production, run migrations once as a deployment step before starting web workers.
+
 The server runs at:
 
 ```text
@@ -234,7 +242,7 @@ Example JSON:
 
 Passwords are stored using Django password hashing.
 
-Login and JWT session APIs are not included yet.
+Login returns SimpleJWT refresh and access tokens. Use the access token as a Bearer token for profile and employee management endpoints.
 
 ---
 
@@ -288,4 +296,34 @@ Example request:
 ```http
 GET /api/profile/
 Authorization: Bearer <your_access_token>
+```
+
+The response contains the authenticated admin's `id`, `username`, `company_name`, `email`, and `role`.
+
+## API - Employees
+
+Create an employee account for the authenticated admin's company:
+
+```http
+POST /api/employees/
+Authorization: Bearer <your_access_token>
+Content-Type: application/json
+```
+
+```json
+{
+  "username": "employee_demo",
+  "email": "employee@example.com",
+  "password": "a_strong_password",
+  "confirm_password": "a_strong_password"
+}
+```
+
+The API sets `admin_id` and `company_name` from the verified access token and admin record. Do not send either field in the request. Employee passwords are stored as Django password hashes. The `(admin_id, email)` pair is unique, so different companies may each have an employee with the same email.
+
+The PostgreSQL schema is in `employee/schema.sql`. In a Django deployment, apply it with:
+
+```bash
+python manage.py migrate
+```
 
