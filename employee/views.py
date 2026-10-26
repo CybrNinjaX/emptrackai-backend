@@ -1,6 +1,6 @@
 import json
 
-from django.contrib.auth.hashers import make_password
+from django.contrib.auth.hashers import make_password,check_password
 from django.db import IntegrityError, transaction
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -71,3 +71,60 @@ def create_employee(request):
             'role': employee.role,
         },
     }, status=201)
+
+@csrf_exempt
+def login_employee(request):
+    if request.method != 'POST':
+        return JsonResponse({
+            'error': 'Only POST requests are allowed.'
+        }, status=405)
+
+    # Read JSON request
+    try:
+        data = json.loads(request.body)
+    except (json.JSONDecodeError, UnicodeDecodeError):
+        return JsonResponse({
+            'error': 'Invalid JSON request.'
+        }, status=400)
+
+    if not isinstance(data, dict):
+        return JsonResponse({
+            'error': 'Request body must be a JSON object.'
+        }, status=400)
+
+    # Get email and password
+    email = data.get('email')
+    password = data.get('password')
+
+    if not email or not password:
+        return JsonResponse({
+            'error': 'Email and password are required.'
+        }, status=400)
+
+    # Find employee using email
+    employee = Employee.objects.filter(
+        email=email
+    ).first()
+
+    if employee is None:
+        return JsonResponse({
+            'error': 'Invalid email or password.'
+        }, status=401)
+
+    # Verify password against stored hash
+    if not check_password(password, employee.password_hash):
+        return JsonResponse({
+            'error': 'Invalid email or password.'
+        }, status=401)
+
+    # Login successful
+    return JsonResponse({
+        'message': 'Employee login successful.',
+        'employee': {
+            'id': employee.id,
+            'username': employee.username,
+            'email': employee.email,
+            'company_name': employee.company_name,
+            'role': employee.role,
+        }
+    }, status=200)
